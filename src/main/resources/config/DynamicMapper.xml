@@ -1,0 +1,124 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="dynamicMapper">
+
+    <!--
+        select * from emp;
+        + where empName="";
+        + where empName="" and job="";
+        + where job="";
+    -->
+
+
+    <select id="ifSelect" parameterType="empDTO" resultType="empDTO">
+        <include refid="empSelectMapper.empSelectSQL"/>
+        <where>
+            <if test="empName!=null">
+                where ename = #{empName}
+            </if>
+            <if test="job!=null">
+                and job=#{job}
+            </if>
+        </where>
+    </select>
+
+
+    <!--
+        : use "trim" instead of "where"
+
+        *trim :
+            prefix = "if present, attach the element at the front"
+            prefixOverrides = if present, attach the element at the front
+
+            suffix = "if present, attach the element at the end"
+            suffixOverrides = " if present, attach the element at the end"
+    -->
+
+    <select id="ifSelectTrim" parameterType="empDTO" resultType="empDTO">
+        <include refid="empSelectMapper.empSelectSQL"/>
+        <trim prefix="where" prefixOverrides="and">
+            <if test="empName!=null">
+                ename = #{empName}
+            </if>
+            <if test="job!=null">
+                and job=#{job}
+            </if>
+        </trim>
+    </select>
+
+
+    <!--
+        : update record
+
+        update emp set ename=? where empno=?;
+        update emp set job=? where empno=?;
+        update emp set sal=? where empno=?;
+        update emp set ename=?, job=? where empno=?;
+
+
+        here, <set></set> tag will take care of comma positioning automatically
+    -->
+    <update id="setTest" parameterType="empDTO">
+        update emp
+        <set>
+
+            <if test="empName!=null">
+                ename=#{empName} ,
+            </if>
+            <if test="job!=null">
+                job=#{job} ,
+            </if>
+            <if test="sal>0">
+                sal=#{sal}
+            </if>
+            <where>
+                empno=#{empno}
+            </where>
+
+        </set>
+    </update>
+
+
+    <!--
+        change <set></set> into <trim></trim> tag
+    -->
+    <update id="setTestTrim" parameterType="empDTO">
+        update emp
+        <trim prefix="set" suffixOverrides=","> <!-- set ename ... job ...  -->
+
+            <if test="empName!=null">
+                ename=#{empName} ,
+            </if>
+            <if test="job!=null">
+                job=#{job} ,
+            </if>
+            <if test="sal>0">
+                sal=#{sal}
+            </if>
+            <where>
+                empno=#{empno}
+            </where>
+
+        </trim>
+    </update>
+
+
+    <!--
+        select by multiple empNo
+
+        select * from emp where emp in (~, ~, ~)
+    -->
+    <select id="forEachTest" parameterType="list" resultType="empDTO">
+        <include refid="empSelectorMapper.empSelectSQL"/>
+        <where>
+            empno in
+            <foreach collection="list" item="item" separator="," open="(" close=")">
+                #{item}
+            </foreach>
+        </where>
+    </select>
+
+</mapper>

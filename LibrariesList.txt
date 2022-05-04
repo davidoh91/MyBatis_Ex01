@@ -1,0 +1,4 @@
+JDBC - ojdbc8 version 21.~
+mybatis lib
+lombok
+log4j - ~.properties file

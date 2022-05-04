@@ -1,0 +1,87 @@
+
+https://mybatis.org/mybatis-3/
+
+ xml문서코딩(mapper문서)
+ <insert>, <update> , <delete>
+  : id 속성 필수 
+  : parameterType=""  -> int , string  = #{_parameter} , #{value}
+
+                         dto =  #{dto안의property명}
+                         map =  #{map의key} 
+                         list= 반복문필요
+
+   : parameterMap 속성은 사용안함.
+
+
+   : resultType은 없다!!!!
+
+
+----------------------------------------------------------------
+   java문서코딩
+
+   int result = sqlSession.insert()
+                           update()
+                           delete()
+
+    * DML 작업은 결과 result가 성공여부를 뜻한다.(0이면 실패, 1이상이면 성공)
+      반드시 commit 또는 rollback 필수
+
+=============================================================================
+ *select경우
+
+ 1) xml문서에서
+   <select id="" parameterType="" reslutType="" reslutMap="">
+
+   : reslutMap은 반드시 <resultMap>태그가 선언되어 있고 선언된 태그의
+     id를 참조한다(DB의 결과와 dto에 매핑결과가 다를때 임의대로
+     매핑 시켜줄때 필요함)   
+
+
+  2)java문서에서 
+      sqlSession.selectOne() : 레코드가 0 또는 1 리턴될때
+                 selectList() : 레코드가 0개 이상 리턴될때 
+
+------------------------------------------------------------ㅇ
+
+  #{} : PreparedStatement형식
+   #{no}  -> setInt(1, 값)
+   #{name} -> setString(1, 값)
+
+ 
+  ${} : Statement형식
+    ${no} ->   "where no=" + 5
+    ${name} -> "where name=" + 이름
+
+
+* - SqlSession  
+select 메소드
+  1) 레코드 0개 이상인경우
+     selectList(String id)
+     selectList(String id , Object parameter)
+     selectList(String id , Object parameter , RowBounds rows)
+
+
+  2) 레코드가 0 또는 1 인경우 
+     selectOne(String id)
+     selectOne(String id, Object parameter)
+
+ -삭제
+  int result =  delete(String id)
+  int result =  delete(String id , Object param)
+
+--등록
+  int result =  insert(String id)
+  int result =  insert(String id , Object param)
+
+--수정
+  int result =  update(String id)
+  int result =  update(String id , Object param)
+
+
+  -Mybatis에서는 int result = executeUpdate() 실행된다.
+
+
+  * parameter로 전달되는 데이터 처리
+     #{이름} : PreparedStatement형식
+
+     ${이름} : Statement형식 (값이 그대로 연결되어 매핑)

@@ -1,0 +1,53 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="empMapper">
+
+    <!-- Write the required queries (CRUD) -->
+
+    <!--
+        (1) but DO NOT include
+        (2) resultType is lowercase java data type
+        (3) sql syntax : parameterType="Java DTO Class" , #{DTO field}
+    -->
+    <select id="selectEnames" resultType="string">
+        select ename from emp
+    </select>
+
+    <!-- insert -->
+    <insert id="insert" parameterType="EmpDTO">
+        insert into emp(empno, ename, job, sal, hiredate) values(#{empNo},#{empName},#{job},#{sal},sysdate)
+    </insert>
+
+    <!-- delete (empno as param)-->
+    <delete id="delete" parameterType="int">
+        delete from emp where empno=#{_parameter}
+    </delete>
+
+    <!-- update (EmpDTO as params)
+            use EmpDTO to receive all params
+    -->
+    <update id="update" parameterType="int">
+        update emp set ename=#{empNo}, job=#{job}, sal=#{sal} where empno=#{empNo}
+    </update>
+
+    <!--
+        select from emp table on job ,
+        refer to sql in other mapper.xml : xmlNamespace.sqlId
+    -->
+    <select id="selectByJob" parameterType="string" resultType="EmpDTO">
+        <include refid="empSelectMapper.empSelectSQL"/>
+        where lower(job)=lower(#{_parameter})
+    </select>
+
+    <!--
+        select all from Member table
+        use settings to map sql's underscore and java's camel case
+    -->
+    <select id="memberSelectAll" resultType="memberDTO">
+        select user_id, user_name, user_age, user_addr from member
+    </select>
+
+</mapper>

@@ -1,0 +1,67 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="empSelectMapper">
+
+    <!-- Write the select queries (CRUD) -->
+
+    <!--
+        (1) but DO NOT include
+        (2) resultType is lowercase java data type
+        (3) sql syntax : parameterType="primative or Java DTO" , resultType="Java DTO", #{DTO field} in sql, #{_parameter} << insert parameter(s) in DAO class method, or use ${} to use statement (instead of prepared statement)
+    -->
+
+
+    <!-- use include to refer to frequently used SQL -->
+    <sql id="empSelectSQL">
+        select empno, ename as empname, job, sal, hiredate from emp
+    </sql>
+
+
+    <!-- select all -->
+    <select id="selectAll" resultType="EmpDTO">
+        <include refid="empSelectSQL"/>
+        order by empno
+    </select>
+
+
+    <!-- select by empNo -->
+    <select id="selectByEmpNo" parameterType="int" resultType="EmpDTO">
+        <include refid="empSelectSQL"/>
+        where empno=#{_parameter}
+    </select>
+
+
+    <!-- select by "less than" sal -->
+    <select id="selectLessThanSal" parameterType="int" resultType="EmpDTO">
+        <include refid="empSelectSQL"/>
+        where sal &lt; #{_parameter}
+    </select>
+
+    <!-- select by "within" min sal and max sal -->
+    <select id="selectWithinSals" parameterType="map" resultType="EmpDTO">
+        <include refid="empSelectSQL"/>
+        where sal between #{min} and #{max}
+        order by sal
+    </select>
+
+
+    <!-- order by column (given as param) / do not use #{} but use ${}-->
+    <select id="selectOrder" parameterType="string" resultType="EmpDTO">
+        <include refid="empSelectSQL"/>
+        order by ${_parameter}
+    </select>
+
+
+    <!-- Select by "%like%" the search keyword -->
+    <select id="selectWhereMix" parameterType="map" resultType="EmpDTO">
+        <include refid="empSelectSQL"/>
+        where upper(${keyfield}) like '%' || upper(#{keyword}) || '%' or empno=#{EmpDTO.empNo} or sal > #{EmpDTO.sal}
+    </select>
+
+
+
+
+</mapper>

@@ -1,0 +1,10 @@
+1) add required libraries
+
+
+2) add java/config/SqlMapConfig.xml & dbInfo.properties
+
+
+3) add java/config/~mapper.xml(s)
+
+
+4) write util/DbUtil.java
